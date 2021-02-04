@@ -4,6 +4,32 @@
 
 using namespace std;
 //---------------------------------------------------------------------------
+TEST(KNearestNeighbors, Top1NearestNeighbor2)
+/// Test if we find even one neighbor
+{
+    // Read the matrix file and store it as internal matrix.
+    auto matrix_file = getDir(__FILE__) + "/data/dataVerySmall.mtx";
+    Matrix matrix = Matrix::readFile(matrix_file);
+
+    unsigned start_node = 2;
+    unsigned k = 1; // The number of neighbors we are interested in.
+
+    auto result = getKNN(matrix, start_node, k);
+
+    std::sort(result.begin(), result.end());
+    std::vector<Matrix::Entry> expected = {{7, 0.243455}};
+
+    ASSERT_EQ(result.size(), expected.size())
+                                << "Result does not contain correct number of elements.";
+
+    for (size_t i = 0; i < result.size(); ++i) {
+        ASSERT_EQ(result[i], expected[i])
+                                    << "Result and expected result differ at index " << i << endl
+                                    << "result[i]: " << result[i] << endl
+                                    << "expected[i]: " << expected[i];
+    }
+}
+//---------------------------------------------------------------------------
 TEST(KNearestNeighbors, Top1NearestNeighbor)
 /// Test if we find even one neighbor
 {
@@ -28,6 +54,35 @@ TEST(KNearestNeighbors, Top1NearestNeighbor)
         << "result[i]: " << result[i] << endl
         << "expected[i]: " << expected[i];
   }
+}
+//---------------------------------------------------------------------------
+TEST(KNearestNeighbors, Top3NearestNeighbors2)
+/// Test if we find the top three neighbors
+{
+    // Read the matrix file and store it as internal matrix.
+    auto matrix_file = getDir(__FILE__) + "/data/data.mtx";
+    Matrix matrix = Matrix::readFile(matrix_file);
+
+    unsigned start_node = 1;
+    unsigned k = 3; // The number of neighbors we are interested in.
+
+    auto result = getKNN(matrix, start_node, k);
+
+    std::sort(result.begin(), result.end());
+
+    std::vector<Matrix::Entry> expected = {{4, 50},
+                                           {2, 100},
+                                           {3, 200}};
+
+    ASSERT_EQ(result.size(), expected.size())
+                                << "Result does not contain correct number of elements.";
+
+    for (size_t i = 0; i < result.size(); ++i) {
+        ASSERT_EQ(result[i], expected[i])
+                                    << "Result and expected result differ at index " << i << endl
+                                    << "result[i]: " << result[i] << endl
+                                    << "expected[i]: " << expected[i];
+    }
 }
 //---------------------------------------------------------------------------
 TEST(KNearestNeighbors, Top3NearestNeighbors)
