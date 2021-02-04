@@ -24,29 +24,29 @@ std::vector<Matrix::Entry> getKNN(const Matrix &m, unsigned start, unsigned k) {
     result.reserve(k);
 
     // ToDo implement your solution here
-    set<pair<double, unsigned>> setds;
-    vector<double> dist(m.width+1, INF);
+    set<pair<double, unsigned>> waitinglist;
+    vector<double> weights(m.width+1, INF);
 
     set<pair<double, unsigned>> NN;
 
-    setds.insert(make_pair(0, start));
-    dist[start] = 0.0;
+    waitinglist.insert(make_pair(0, start));
+    weights[start] = 0.0;
 
-    while (!setds.empty()) {
-        pair<double, int> tmp = *(setds.begin());
-        setds.erase(setds.begin());
+    while (!waitinglist.empty()) {
+        pair<double, int> tmp = *(waitinglist.begin());
+        waitinglist.erase(waitinglist.begin());
         int u = tmp.second;
         for (auto &e : m.getNeighbors(u)) {
             int v = e.column;
             double weight = e.weight;
-            if (dist[v] > dist[u] + weight) {
-                if (dist[v] != INF) {
-                    setds.erase(setds.find(make_pair(dist[v], v)));
-                    NN.erase(NN.find(make_pair(dist[v], v)));
+            if (weights[v] > weights[u] + weight) {
+                if (weights[v] != INF) {
+                    waitinglist.erase(waitinglist.find(make_pair(weights[v], v)));
+                    NN.erase(NN.find(make_pair(weights[v], v)));
                 }
-                dist[v] = dist[u] + weight;
-                setds.insert(make_pair(dist[v], v));
-                NN.insert(make_pair(dist[v], v));
+                weights[v] = weights[u] + weight;
+                waitinglist.insert(make_pair(weights[v], v));
+                NN.insert(make_pair(weights[v], v));
             }
         }
     }
